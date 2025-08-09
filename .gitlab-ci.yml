@@ -1,0 +1,46 @@
+stages:
+  - build
+  - style
+  - test
+  - deploy
+
+
+build-job:
+  stage: build
+  script:
+    - cd src/SimpleBashUtils/cat/
+    - make
+    - cd ../grep/
+    - make
+  artifacts: 
+    paths:
+      - src/SimpleBashUtils/cat/
+      - src/SimpleBashUtils/grep/
+    expire_in: 30 days
+  tags:
+    - cat
+style-job:
+  stage: style
+  script: 
+    - bash clang.sh   
+  tags:
+    - cat
+test-job:
+  stage: test
+  when: on_success
+  script: 
+    - bash test.sh  
+  tags:
+    - cat 
+deploy-job:
+  stage: deploy
+  tags: 
+    - cat
+  when: manual  
+  script:
+    - bash deploy.sh
+  after_script:
+    - bash src/telegram.sh
+  
+
+
